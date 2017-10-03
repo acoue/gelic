@@ -226,7 +226,7 @@ return [
              */
             //'port' => 'non_standard_port_number',
             'username' => 'root', //Prod : acouefrerngecko
-            'password' => '', //Prod : 456Eclipse
+            'password' => 'Petosse@85', //Prod : 456Eclipse
             'database' => 'gecko', //prod : acouefrerngecko
             'encoding' => 'utf8',
             'timezone' => 'UTC',
