@@ -48,40 +48,47 @@ class LicenciesController extends AppController
         
         $licencies = $this->Licencies->find()->contain(['Clubs'=>['Regions'],'Disciplines','Grades']);
         
-        $filename = date('Y-m-d_hhmis') . "_export_licencies.csv";
+        $filename = date('Y-m-d_his') . "_export_licencies.csv";
         $file = new File(TMP_FILES . $filename, true, 0644);
         $file->create();
         $file->write('"Prénom";"nom";"sexe";"ddn";"licence";"discipline";"grade";"club";"region";');
         $file->write("\n");
         
         foreach ($licencies as $licencie) {
+            $file->write('"');
             $file->write($licencie->prenom);
+            $file->write('";"');
             $file->write($licencie->nom);
+            $file->write('";"');
             $file->write($licencie->sexe);
+            $file->write('";"');
             $file->write($licencie->ddn);
+            $file->write('";"');
             $file->write($licencie->licence);
+            $file->write('";"');
             $file->write($licencie->discipline->name);
+            $file->write('";"');
             $file->write($licencie->grade->name);
+            $file->write('";"');
             $file->write($licencie->club->name);
+            $file->write('";"');
             $file->write($licencie->club->region->name);
+            $file->write('";');
             $file->write("\n");
         }
         
         $file->close();
+        $this->autoRender = false;
+        $this->response->type('application/csv');
+        $this->response->file(TMP_FILES . $filename, ['download' => true, 'name' => $filename]);
+        return $this->response;
         
-        header('Content-Type: application/csv');
-        header('Content-Disposition: attachment;filename="'.$filename.'"');
-        header('Cache-Control: max-age=0');
-        
-        
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header('Content-Description: File Transfer');
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename={$fileName}");
-        header("Expires: 0");
-        header("Pragma: public");
-        
-        $fh = @fopen( $file, 'w' );
+//         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+//         header('Content-Description: File Transfer');
+//         header("Content-type: text/csv");
+//         header("Content-Disposition: attachment; filename={$fileName}");
+//         header("Expires: 0");
+//         header("Pragma: public");
     }
     
     
