@@ -61,6 +61,8 @@ define('TESTS', ROOT . DS . 'tests' . DS);
  */
 define('TMP', ROOT . DS . 'tmp' . DS);
 
+define('TMP_FILES', ROOT . DS . 'tmp' . DS . 'files');
+
 /**
  * Path to the logs directory.
  */

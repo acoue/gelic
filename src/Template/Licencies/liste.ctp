@@ -5,7 +5,9 @@
 		<div class="row">
 			<div class="col-lg-2"></div>
 			<div class="col-lg-20">
-
+				<p align="center">
+				<?= $this->Html->link(__('Exporter'), ['action' => 'export'], ['class'=>'btn btn-default']) ?> 		
+				</p><br />
 				<table cellpadding="0" cellspacing="0" class="table table-striped">
 				    <thead>
 				        <tr align='center'>

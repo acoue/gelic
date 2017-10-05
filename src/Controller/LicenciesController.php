@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Filesystem\File;
 
 /**
  * Licencies Controller
@@ -30,15 +31,62 @@ class LicenciesController extends AppController
 
     public function liste()
     {
-    	if(! $this->Securite->isAdmin()) return $this->redirect(['controller'=>'pages', 'action'=>'permission']);
-    	$this->paginate = [
-    			'contain' => ['Clubs']
-    	];
-    	$licencies = $this->paginate($this->Licencies,['limit' => 50]);
-    
-    	$this->set(compact('licencies'));
-    	$this->set('_serialize', ['licencies']);
+        if(! $this->Securite->isAdmin()) return $this->redirect(['controller'=>'pages', 'action'=>'permission']);
+        $this->paginate = [
+            'contain' => ['Clubs']
+        ];
+        $licencies = $this->paginate($this->Licencies,['limit' => 50]);
+        
+        $this->set(compact('licencies'));
+        $this->set('_serialize', ['licencies']);
     }
+    
+    public function export()
+    {
+        if(! $this->Securite->isAdmin()) return $this->redirect(['controller'=>'pages', 'action'=>'permission']);
+        
+        
+        $licencies = $this->Licencies->find()->contain(['Clubs'=>['Regions'],'Disciplines','Grades']);
+        
+        $filename = date('Y-m-d_hhmis') . "_export_licencies.csv";
+        $file = new File(TMP_FILES . $filename, true, 0644);
+        $file->create();
+        $file->write('"Prénom";"nom";"sexe";"ddn";"licence";"discipline";"grade";"club";"region";');
+        $file->write("\n");
+        
+        foreach ($licencies as $licencie) {
+            $file->write($licencie->prenom);
+            $file->write($licencie->nom);
+            $file->write($licencie->sexe);
+            $file->write($licencie->ddn);
+            $file->write($licencie->licence);
+            $file->write($licencie->discipline->name);
+            $file->write($licencie->grade->name);
+            $file->write($licencie->club->name);
+            $file->write($licencie->club->region->name);
+            $file->write("\n");
+        }
+        
+        $file->close();
+        
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        
+        
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header('Content-Description: File Transfer');
+        header("Content-type: text/csv");
+        header("Content-Disposition: attachment; filename={$fileName}");
+        header("Expires: 0");
+        header("Pragma: public");
+        
+        $fh = @fopen( $file, 'w' );
+    }
+    
+    
+    
+    
     /**
      * View method
      *

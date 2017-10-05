@@ -35,7 +35,7 @@ class JurysTable extends Table
         parent::initialize($config);
 
         $this->table('jurys');
-        $this->displayField(['prenom','nom']);
+        $this->displayField('display_name');
         $this->primaryKey('id');
 
         $this->belongsTo('Grades', [
